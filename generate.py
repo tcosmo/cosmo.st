@@ -78,7 +78,9 @@ def generate_site(pages, posts):
 
         last_edited = get_last_edited(post)
         output = post_template.render(
-            post_content=posts[post].content, last_edited=last_edited
+            post_meta=posts[post].metadata,
+            post_content=posts[post].content,
+            last_edited=last_edited,
         )
         with open(path, "w") as f:
             f.write(output)

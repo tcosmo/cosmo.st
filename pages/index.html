@@ -3,14 +3,24 @@
 {% block content %}
 
 <div class="flex flex-col lg:ml-12 lg:mt-10 m-2 mt-4 space-y-2 lg:space-y-5">
-  {% for post_url, post in posts_ordered %}
-  <div class="bg-gray-500 px-3 py-2 w-[450px] rounded-sm">
-    <h1 class="font-bold text-xl normal-link leading-tight"><a href="{{post_url}}">{{post.metadata.title}}</a></h1>
-    <h2 class="text-sm">{{post.metadata.date}} &middot;
-      <span class="text-sm font-bold text-gray-900 leading-tight">{{post.metadata.series}}</span>
-    </h2>
+  <span class="font-bold text-xl">Posts</span>
+  <div class="pl-4">
+    {% for post_url, post in posts_ordered %}
+    <div class="flex space-x-5">
+      <div class="font-bold">
+        {{post.metadata.date}}</div>
+
+      <div class="flex flex-col">
+        <a class="text-lg leading-none hover:text-slate-200" href="{{post_url}}">{{post.metadata.title}}</a>
+        <div class="text-slate-400">{{post.metadata.series}}</div>
+      </div>
+
+      <!-- <span class="text-sm font-bold text-gray-900 leading-tight">{{post.metadata.series}}</span> -->
+
+    </div>
+
+    {% endfor %}
   </div>
-  {% endfor %}
 </div>
 
 {% endblock %}

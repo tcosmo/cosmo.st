@@ -1,10 +1,8 @@
 ---
 date: "2021/12/26"
-title: "Part 3: Memory and pointers I: definitions"
+title: "Part 3: Memory and pointers"
 series: "C for Python programmers"
 ---
-
-# Memory and pointers I
 
 Pointers are perhaps the most dreaded concept of the C language. It is immediately associated with hard-to-find bugs, unsafety and `segmentation fault (core dumped)`.
 
@@ -58,7 +56,6 @@ This layer of abstraction provided by the OS is key to the contiguous model of m
 If we were writing our programs in assembly code instead of C we would also be manipulating virtual addresses. Only the OS's kernel manipulates physical addresses[^0].
 
 [^0]: [On that subject](https://stackoverflow.com/questions/41429622/are-addresses-in-x86-assembly-virtual-or-physical).
-
 
 ## Dereference operator
 
