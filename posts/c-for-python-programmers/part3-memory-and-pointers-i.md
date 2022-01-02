@@ -15,6 +15,7 @@ The C language allows us to manipulate memory at (almost) the same level of prec
 As a Python analogy you can imagine that memory is a dictionary mapping memory addresses to bytes. Contrarily to Python dictionaries, this mapping between memory addresses and byte data happens (almost) at hardware level which gives to the C language (almost) maximal speed in its read/write interaction with memory data.
 
 ## Table of contents
+
 <details markdown="1">
 <summary>Show table of contents</summary>
 [TOC]
@@ -22,7 +23,7 @@ As a Python analogy you can imagine that memory is a dictionary mapping memory a
 
 ## Memory addresses
 
-As a first approximation, any piece of data processed by a C program lives in Random Access Memory (RAM) at a given address: it is the core principle of Random Access Memory that you can access data at any "random" address.
+As a first approximation, any piece of data processed by a C program lives at a given address in Random Access Memory (RAM): it is the core principle of Random Access Memory that you can access data at any "random" address.
 
 For instance, the program:
 
@@ -42,7 +43,7 @@ int my_int = 1024;
 printf("%p", &my_int);
 ```
 
-We get the address of the **first byte** of a **contiguous** memory chunk of 4 bytes that constitutes `my_int`. Indeed, `&my_int`, `&my_int+1`, `&my_int+2`, `&my_int+3` will be the memory addresses of the four bytes which constitute `my_int`.
+We get the address of the **first byte** of a **contiguous** memory chunk of the 4 bytes that constitutes `my_int`. Indeed, `&my_int`, `&my_int+1`, `&my_int+2`, `&my_int+3` will be the memory addresses of the four bytes which constitute `my_int`.
 
 This linear model of contiguous memory addresses, that we can manipulate with arithmetical operations (`&my_int+1`, `&my_int+2` etc...), is a fundamental characteristic of modern computer architectures.
 
@@ -54,9 +55,14 @@ That's where the OS (mac, Linux, Windows) comes into play: the OS allows each pr
 
 This layer of abstraction provided by the OS is key to the contiguous model of memory that we described above: in the _virtual address space_ (which is the one that we see in our programs), the program's data is guaranteed to be stored contiguously while actually, in the _physical address space_, the data is stored wherever there is room left. It is the OS that is responsible for mapping _virtual_ addresses to _physical_ ones.
 
-## Dereferencing operator
+If we were writing our programs in assembly code instead of C we would also be manipulating virtual addresses. Only the OS's kernel manipulates physical addresses[^0].
 
-Accessing the value stored at a given address is called **dereferencing**. The dereferencing operator in C is unary[^1] `*`:
+[^0]: [On that subject](https://stackoverflow.com/questions/41429622/are-addresses-in-x86-assembly-virtual-or-physical).
+
+
+## Dereference operator
+
+Accessing the value stored at a given address is called **dereferencing**. The dereference operator in C is unary[^1] `*`:
 
 [^1]: _Unary_ operator as opposed to the _binary_ operator `*` which is multiplication.
 
@@ -71,9 +77,9 @@ Will output `34` as we access the value stored at the address `&val`.
 
 What if we want to store the address of variable `a` in an other variable `b`? What should be the type of variable `b`? In other words: what is the type of `&a`?
 
-Theoretically, since memory addresses are stored on 8 bytes (on 64-bit computers) `&a` should for instance be `uint64_t` (defined in `<stdint.h>`) as it is a type guaranteed to be encoded on 64 bits.
+Theoretically, since memory addresses are stored on 8 bytes (on 64-bit computers), the type of `&a` should for instance be `uint64_t` (defined in `<stdint.h>`) as it is a type guaranteed to be encoded on 64 bits.
 
-However, solely having the memory address of `a` is not very useful, because when we **dereference** that address (i.e. access the data stored at the address) we need to know the type of `a` in order to reconstruct the information. For instance, if `a` is an `int`, we will know that the bytes constituting `a` are stored between `&a` and `&a+sizeof(int)` excluded[^2].
+However, solely having the memory address of `a` is not very useful, because when we **dereference** that address (i.e. access the data stored at the address) the program needs to know the type of `a` in order to reconstruct the information. For instance, if `a` is an `int`, the program will know that the bytes constituting `a` are stored between `&a` and `&a+sizeof(int)` excluded[^2] and make sense of the data accordingly.
 
 [^2]: Generally `sizeof(int) = 4`, i.e `int` are stored on 4 bytes.
 
@@ -96,7 +102,7 @@ The program will output the memory address of `val` such as `0x7fffc27fad0c` and
 
 ## What is the use of pointers?
 
-Given the fundamental nature of pointers asking "what is the use of pointers?" is potentially as broad as asking "what is the use of oxygen?". Pointers can be used in many different ways and contexts: they are versatile.
+Given the fundamental nature of pointers asking the question "what is the use of pointers?" is potentially as broad as asking "what is the use of oxygen?". Pointers can be used in many different ways and contexts: they are versatile.
 
 We can however describe two cases where pointers are very useful:
 
@@ -203,14 +209,14 @@ Pointers are memory addresses together with some type information. Hence, the da
 
 ### Invalid addresses
 
-Here is a very simple example of invalid address:
+Here is a very simple example of an invalid address:
 
 ```C
 int* p = NULL;
 printf("%d", *p);
 ```
 
-The value `NULL` is used as a default and initialization value for pointers to mean **I am not pointing to anything**. The program will crash with the infamous `segmentation fault (core dumped)` as we are trying to access data at an invalid address.
+The value `NULL` is used as a default/initialization value for pointers to mean **I am not pointing to anything**. The program will crash with the infamous `segmentation fault (core dumped)` as we are trying to access data at an invalid address.
 
 `NULL` pointers are often used for error management in C. For instance if we try to open a file that does not exists:
 
@@ -219,6 +225,7 @@ The value `NULL` is used as a default and initialization value for pointers to m
 
 int main() {
   FILE* file_ptr = fopen("inexistant_file.txt", "r");
+
   if (file_ptr == NULL) {
     printf("Couldn't open the file!");
     return -1; // return error code
@@ -231,7 +238,7 @@ int main() {
 
 ### Dangling pointer
 
-The example above was quite simple in the sense the address stored by the pointer was completely invalid.
+The example above was quite simple in the sense the address stored by the pointer was invalid but easy to recognize and to test for.
 
 There are cases, much trickier, where an address is at some point valid but then becomes invalid:
 
@@ -247,7 +254,7 @@ void main() {
 }
 ```
 
-This program crashes with `segmentation fault (core dumped)`. The reason is because variable `val` only lives **within the scope of function f**. Hence, as soon as the function returns, the address `&val`, becomes invalid[^5]. In the main function we are dereferencing an invalid address, which crashes the program.
+This program crashes with `segmentation fault (core dumped)`. The reason is because the variable `val` only lives **within the scope of function f**. Hence, as soon as the function returns, the address `&val`, becomes invalid[^5]. In the main function we are dereferencing an invalid address, which crashes the program.
 
 [^5]: We'll see why in more details in [part 4](part4).
 
@@ -257,17 +264,17 @@ This program crashes with `segmentation fault (core dumped)`. The reason is beca
 
 In modern computer architectures, memory is seen as a contiguous space of addressable bytes. Nowadays memory addresses are represented on 64 bits.
 
-This model of memory is enforced by the OS which, under the hood, translates the contiguous _virtual memory addresses_ that we work with into, potentially non-contiguous, _physical memory addresses_.
+This model of memory is enforced by the OS which, under the hood, translates contiguous _virtual memory addresses_ into, potentially non-contiguous, _physical memory addresses_ in RAM.
 
-C pointers are memory addresses together with the type of the object that is pointed at. Communicating the address of an object instead of the object itself to a function allows to avoid inefficient copies of the data. By **dereferencing** pointers we can either read or write the data they are pointing to.
+C pointers are memory addresses together with the type of the object that is pointed at. Communicating the address of an object instead of the object itself to a function allows to avoid inefficient copies of the data. By **dereferencing** pointers we can either read or write the data they are pointing at.
 
 The concept of pointers inherently comes with the risk of manipulating invalid addresses or worse, manipulating addresses that _become_ invalid through time. This issue is a source of bugs that can be arbitrarily hard to discover or fix.
 
 So far, it is not evident that the concept of pointers is absolutely needed. They represent a convenient feature but we could question whether they are truly necessary: are there things that we really cannot do without pointers?
 
-The answer is **yes**. We crucially need pointers as soon as we want to work with big chunks of memory (> 8Mb) or that we want to work with data of which size is only known at runtime and potentially unbounded. Imagine a software such as Photoshop for working with images: you cannot know in advance (at compile time) the size of the images that your users are going to manipulate and you will need **dynamically allocate** that memory on the fly, at runtime.
+The answer is **yes**. We crucially need pointers as soon as we want to work with big chunks of memory (> 8Mb) or that we want to work with data whose size is only known at runtime and potentially unbounded. Imagine a software such as Photoshop for working with images: you cannot know in advance (at compile time) the size of the images that your users are going to load in the software and you will need to **dynamically allocate** the required memory on the fly, at runtime.
 
-[Part 4](part4) of this series is about Dynamic Allocation and will present two concepts that we carefully avoided so far: the Stack and the Heap.
+[Part 4](part4) of this series is about Dynamic Memory Allocation and will present two concepts that we have carefully avoided so far: the Stack and the Heap.
 
 ## Exercises
 
@@ -378,6 +385,7 @@ void main() {
   <summary>Solution</summary>
 
 1. and 2.
+
 ```C
 #include <limits.h>
 #include <stdio.h>
@@ -397,8 +405,6 @@ void main() {
 }
 ```
 
-
 3. On a _little endian_ (i.e. less significant byte first) with 4 bytes `int` the hex representation of the bytes of `INT_MAX` outputted by the program is `ff ff ff 7f` (it would be `7f ff ff ff` on a _big endian_ system). Hence the corresponding total hex representation of `INT_MAX` is `0x7fffffff`. It is not `0xffffffff` because `INT_MAX` is signed and half of the 4-byte space is used to represent negative numbers (which start with an initial bit equal to 1). `0xffffffff` is the representation of `UINT_MAX` which is the biggest `unsigned int`.
 
 </details>
-

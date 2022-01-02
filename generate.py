@@ -15,7 +15,7 @@ LAYOUT_NAME = "__layout.html"
 templateLoader = jinja2.FileSystemLoader(searchpath=".")
 templateEnv = jinja2.Environment(loader=templateLoader)
 templateEnv.filters["markdown"] = lambda content: markdown.markdown(
-    content, extensions=["fenced_code", "footnotes", "md_in_html", "toc"]
+    content, extensions=["fenced_code", "footnotes", "md_in_html", "toc", "sane_lists"]
 )
 
 print("Generating website")
