@@ -10,7 +10,7 @@ Pointers are perhaps the most dreaded concept of the C language. It is immediate
 
 The key to understand pointers is to treat them for what they fundamentally are: **memory addresses**. It is based on this very bare definition that we can understand the versatility of the concept and how they are used in many different contexts. But first, we need to get a clear mental representation of how memory is represented and handled by modern computers.
 
-The C language allows us to manipulate memory at (almost) the same level of precision that assembly code would give us. Memory is viewed as a **contiguous** space of addresses which all contain 1 byte of data.
+The C language allows us to manipulate memory at (almost) the same level of precision that assembly code would give us. In that setting, memory consists of a **contiguous** space of addressable bytes (8 bits).
 
 As a Python analogy you can imagine that memory is a dictionary mapping memory addresses to bytes. Contrarily to Python dictionaries, this mapping between memory addresses and byte data happens (almost) at hardware level which gives to the C language (almost) maximal speed in its read/write interaction with memory data.
 
