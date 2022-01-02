@@ -1,3 +1,2 @@
 # cosmo.st
-
-Dev and research blog of Cosmo Stérin
+[http://cosmo.st](http://cosmo.st)
