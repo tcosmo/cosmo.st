@@ -1,0 +1,14 @@
+{% extends "pages/__layout.html" %}
+
+{% block content %}
+
+<section class="m-5 post">
+  <article class="prose prose-invert">
+    {{ post_content|markdown }}
+  </article>
+</section>
+
+<footer class="text-xs italic">
+  Last edited: {{last_edited}}
+</footer>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="/static/css/style.css" rel="stylesheet">
+
+  <!-- Highlight js -->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/base16/dracula.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+
+  <!-- Mathjax -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <title>cosmo.st</title>
+</head>
+
+<body class="bg-gray-800 text-white xl:ml-[200px] lg:ml-[100px] lg:mt-10 m-2">
+  <a href="/">
+    <h1 class="text-5xl font-bold">Cosmo.st</h1>
+    <h2 class="text-sm ml-1">research &middot; development &middot; thoughts</h2>
+  </a>
+  {% block content %}
+
+  {% endblock %}
+  <script>hljs.highlightAll();</script>
+</body>
+
+</html>

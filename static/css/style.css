@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.normal-link {
+  @apply text-blue-300 underline cursor-pointer;
+}
+
+.normal-link:hover {
+  @apply text-blue-400;
+}
+
+.post pre {
+  @apply p-1;
+}
+
+.post pre code {
+  background-color: transparent !important;
+}
+
+.post code {
+  @apply px-1.5 py-1 font-normal;
+  background-color: var(--tw-prose-pre-bg);
+}
+
+.post code::before {
+  content: "" !important;
+}
+
+.post code::after {
+  content: "" !important;
+}
+
+.post summary {
+  @apply font-bold cursor-pointer !important;
+}
