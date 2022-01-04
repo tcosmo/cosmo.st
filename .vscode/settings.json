@@ -2,5 +2,7 @@
   "python.pythonPath": "/home/cosmo/Documents/projects/cosmo.st/venv/bin/python3.9",
   "git.ignoreLimitWarning": true,
   "cSpell.enabled": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "C_Cpp.clang_format_style": "chromium",
+  "C_Cpp.clang_format_fallbackStyle": "chromium"
 }

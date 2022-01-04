@@ -112,8 +112,8 @@ Pointers allow us to do something very natural. When passing data to a function,
 passing a copy of that data we can rather give the address of the data to the function and let the function dereference it.
 
 ```C
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef struct {
   int health;
@@ -130,13 +130,15 @@ bool is_character_dead(Character* character) {
 }
 
 int main() {
-    Character hero = {.health = 30, .strength = 10,
-                      .agility = 2, .intelligence = 20};
+  Character hero = {
+      .health = 30, .strength = 10, .agility = 2, .intelligence = 20};
 
-    printf("%ld\n", sizeof(hero));
+  printf("%ld\n", sizeof(hero));
 
-    if (is_character_dead(&hero)) printf("Dead :(\n");
-    else printf("Alive!\n");
+  if (is_character_dead(&hero))
+    printf("Dead :(\n");
+  else
+    printf("Alive!\n");
 }
 ```
 
@@ -155,9 +157,9 @@ In the above example we only have been reading data but we can also write data u
 ```C
 void fight(Character* characterA, Character* characterB) {
   if (characterA->strength > characterB->strength) {
-    characterB->health = 0; // Kill B if less strong
+    characterB->health = 0;  // Kill B if less strong
   } else if (characterA->strength < characterB->strength) {
-    characterA->health = 0; // Kill A if less strong
+    characterA->health = 0;  // Kill A if less strong
   }
   // do nothing if same strength
 }
@@ -167,7 +169,7 @@ This principle can also be used to return several values in a function:
 
 ```C
 int sum_and_diff(int a, int b, int* ret_diff) {
-  *ret_diff = a-b;
+  *ret_diff = a - b;
   return a + b;
 }
 
@@ -176,7 +178,7 @@ void main() {
   int b = 3;
   int diff = 0;
 
-  int sum = sum_and_product(a,b,&diff);
+  int sum = sum_and_product(a, b, &diff);
 
   printf("%d %d\n", sum, diff);
 }
@@ -186,9 +188,8 @@ void main() {
 
 Note that if a function should not write but only read the dereferenced value of a pointer you can use the keyword `const` as a protection:
 
-```
+```C
 bool is_character_dead(const Character* character) {
-
   // ERROR: will not compile because of const
   character->health = -9;
 
@@ -225,7 +226,7 @@ int main() {
 
   if (file_ptr == NULL) {
     printf("Couldn't open the file!");
-    return -1; // return error code
+    return -1;  // return error code
   }
 
   fclose(file_ptr);
@@ -280,8 +281,8 @@ The answer is **yes**. We crucially need pointers as soon as we want to work wit
 Consider the code:
 
 ```C
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
 typedef struct {
   uint8_t h, w;
