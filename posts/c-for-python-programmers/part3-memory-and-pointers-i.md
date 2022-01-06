@@ -41,9 +41,7 @@ int my_int = 1024;
 printf("%p", &my_int);
 ```
 
-We get the address of the **first byte** of a **contiguous** memory chunk of the 4 bytes that constitutes `my_int`. Indeed, `&my_int`, `&my_int+1`, `&my_int+2`, `&my_int+3` will be the memory addresses of the four bytes which constitute `my_int`.
-
-This linear model of contiguous memory addresses, that we can manipulate with arithmetical operations (`&my_int+1`, `&my_int+2` etc...), is a fundamental characteristic of modern computer architectures.
+We get the address of the **first byte** of a **contiguous** memory chunk of the 4 bytes that constitutes `my_int`. This linear model of contiguous memory addresses is a fundamental characteristic of modern computer architectures.
 
 ## Physical vs Virtual memory
 
@@ -76,9 +74,7 @@ What if we want to store the address of variable `a` in an other variable `b`? W
 
 Theoretically, since memory addresses are stored on 8 bytes (on 64-bit computers), the type of `&a` should for instance be `uint64_t` (defined in `<stdint.h>`) as it is a type guaranteed to be encoded on 64 bits.
 
-However, solely having the memory address of `a` is not very useful, because when we **dereference** that address (i.e. access the data stored at the address) the program needs to know the type of `a` in order to reconstruct the information. For instance, if `a` is an `int`, the program will know that the bytes constituting `a` are stored between `&a` and `&a+sizeof(int)` excluded[^2] and make sense of the data accordingly.
-
-[^2]: Generally `sizeof(int) = 4`, i.e `int` are stored on 4 bytes.
+However, solely having the memory address of `a` is not very useful, because when we **dereference** that address (i.e. access the data stored at the address) the program needs to know the type of `a` in order to reconstruct the information.
 
 This is why in C, pointer types relate to the type of the object being referenced:
 
@@ -201,6 +197,91 @@ bool is_character_dead(const Character* character) {
 
 This is the topic of [part 4](part4) :)
 
+## Pointers and arrays
+
+### Arrays are not pointers
+
+As mentioned in [part 2](part2) there is a tight relationship between arrays and pointers. Arrays **are not pointers** but they _decay_ into pointers.
+
+To convince ourselves that they are not pointers the following program suffices:
+
+```C
+void main() {
+  int* pointer;
+  int array[5] = {123, 23, 343, 87, 45};
+  printf("%ld %ld", sizeof(pointer), sizeof(array));
+}
+```
+
+On most computers it will output `8 20`: pointers are 64-bit long (8 bytes) but here the size of the array is 20 bytes (the size of five 4-byte `int`).
+
+However, `array` corresponds to the address of `array[0]`:
+
+```C
+printf("%d %d\n", array[0], *array);
+```
+
+Will output twice the same number. In fact the syntax `array[i]` is solely syntax sugar for `*(array+i)`:
+
+```C
+printf("%d %d\n", array[2], *(array + 2));
+```
+
+### Arrays decay into pointers in function calls
+
+Arrays **decay** into pointers when passed to a function:
+
+```C
+void f(int arr[]) {
+  printf("%ld\n", sizeof(arr));
+}
+
+void main() {
+  int array[5] = {123, 23, 343, 87, 45};
+  printf("%ld", sizeof(array));
+  f(array);
+}
+```
+
+Will print `20 8` and the signatures `void f(int arr[])` and `void f(int* arr)` are equivalent. This means that arrays are are not copied but referenced by their address when passed as function parameters:
+
+```C
+void f(int* arr) {
+  arr[0] = 9000;
+}
+
+void main() {
+  int array[5] = {123, 23, 343, 87, 45};
+  printf("%d\n", array[0]);
+  f(array);
+  printf("%d\n", array[0]);
+}
+```
+
+Will output `123` and then `9000`: `array` has been directly changed by the function.
+
+### Passing arrays by copy is possible
+
+Passing arrays by copy is possible, by wrapping them in a struct:
+
+```C
+typedef struct {
+  int arr[5];
+} ArrWrap;
+
+void f(ArrWrap wrap) {
+  wrap.arr[0] = 9000;
+}
+void main() {
+  ArrWrap wrap = {.arr = {123, 23, 343, 87, 45}};
+  printf("%d\n", wrap.arr[0]);
+  f(wrap);
+  printf("%d\n", wrap.arr[0]);
+}
+```
+
+Will output `123 123`: function `f` has not changed the initial `wrap` object directly but worked on a copy instead.
+
 ## The danger of pointers
 
 Pointers are memory addresses together with some type information. Hence, the danger of pointers is the same as the danger of sending letters by the Post: an address can be or become invalid.
@@ -270,7 +351,7 @@ The concept of pointers inherently comes with the risk of manipulating invalid a
 
 So far, it is not evident that the concept of pointers is absolutely needed. They represent a convenient feature but we could question whether they are truly necessary: are there things that we really cannot do without pointers?
 
-The answer is **yes**. We crucially need pointers as soon as we want to work with big chunks of memory (> 8Mb) or that we want to work with data whose size is only known at runtime and potentially unbounded. Imagine a software such as Photoshop for working with images: you cannot know in advance (at compile time) the size of the images that your users are going to load in the software and you will need to **dynamically allocate** the required memory on the fly, at runtime.
+The answer is **yes**. We will see that we crucially need pointers as soon as we want to work with big chunks of memory (> 8Mb) or that we want to work with data whose size is only known at runtime and potentially unbounded. Imagine a software such as Photoshop: you cannot know beforehand (at compile time) the size of the images that your users are going to load in the software and you will need to **dynamically allocate** the required memory on the fly, at runtime.
 
 [Part 4](part4) of this series is about Dynamic Memory Allocation and will present two concepts that we have carefully avoided so far: the Stack and the Heap.
 
