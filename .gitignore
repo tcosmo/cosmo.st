@@ -5,6 +5,8 @@ __pycache__
 mini-c-cryptocurrency
 *.out
 
+playground
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
